@@ -22,6 +22,8 @@
   <!-- Custom styles for this page -->
   <link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
 
+  <link href="{% static 'base/vendor/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
+
 </head>
 
 <body id="page-top" class="bg-gradient-primary">
@@ -67,9 +69,26 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Catalogos de Inventario</h6>
+            {% if perms.inv.view_categoria %}
             <a class="collapse-item" href="{% url 'inv:categoria_list' %}">Categorias</a>
+            {% endif %}
+            {% if perms.inv.view_subcategoria %}
             <a class="collapse-item" href="{% url 'inv:subcategoria_list' %}">Sub Categorias</a>
+            {% endif %}
+            {% if perms.inv.view_marca %}
             <a class="collapse-item" href="{% url 'inv:marca_list' %}">Marca</a>
+            {% endif %}
+            {% if perms.inv.view_unidadmedida %}
+            <a class="collapse-item" href="{% url 'inv:um_list' %}">Unidad Medida</a>
+            {% endif %}
+            {% if perms.inv.view_producto %}
+            <a class="collapse-item" href="{% url 'inv:producto_list' %}">Producto</a>
+            {% endif %}
+            
+            <h6 class="collapse-header">Catalogos de Compras</h6>
+            {% if perms.cmp.view_proveedor %}
+            <a class="collapse-item" href="{% url 'cmp:proveedor_list' %}">Proveedor</a>
+            {% endif %}
           </div>
         </div>
       </li>
@@ -304,7 +323,7 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
                 <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
               </a>
               <!-- Dropdown - User Information -->
@@ -393,6 +412,8 @@
     </div>
   </div>
 
+  <div class="modal" id="popup" ></div>
+
   <!-- Bootstrap core JavaScript-->
   <script src="{% static 'base/vendor/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'base/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -406,6 +427,51 @@
     <!-- Page level plugins -->
     <script src="{% static 'base/vendor/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <script src="{% static 'base/vendor/jquery-confirm/jquery-confirm.min.js' %}"></script>
+
+  {% block control_modal %}
+    <script>
+      function abrir_modal(url){
+        $("#popup").load(url, function(){
+          $(this).modal({
+            backdrop: 'static',
+            keyboard: false
+          })
+          $(this).modal('show');
+        })
+        return false;
+      }
+
+      function cerrar_modal(){
+        $("#popup").modal('hide');
+        return false;
+      }
+
+      function mensaje(msg,color='green')
+      {
+        if (color == "success"){
+          color = "green";
+        }
+        if (color == "error"){
+          color = "red";
+        }
+        $.alert({
+          title: "", 
+          theme: 'material',
+          type: color,
+          content: msg
+        });
+      }
+
+      {% if messages %}
+        {% for message in messages %}
+          console.log("{{ message.tags }}");
+          mensaje("{{ message }}","{{ message.tags }}");
+        {% endfor %}
+      {% endif %}
+    </script>
+  {% endblock %}
 
   {% block js_page %}{% endblock %}
 </body>
