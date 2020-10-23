@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-lg-5 form-group">
                                 <select name="enc_cliente" id="enc_cliente" class="form-control">
-                                    <option value="0" >Seleccione Cliente</option>
+                                    <option value="0">Seleccione Cliente</option>
                                     {% for item in clientes %}
                                         <option value="{{item.id}}">{{ item.nombres }} {{item.apellidos}} </option>
                                     {% endfor %}
@@ -227,13 +227,13 @@
             return false;
         }
 
-        var path = "{#% url 'api:producto_list' %#}" + codigo;
+        var path = "{% url 'api:producto_list' %}" + codigo;
         $.ajax({
             type:"GET",
             url: path,
             success: function(r){
                 console.log(r);
-                console.log(r.existencia);
+                console.log("Valor nuevo...."+r.existencia);
                 console.log(r.estado);
 
                 if(r.existencia<=0 || !r.estado){
